@@ -1,0 +1,326 @@
+# HubSpot MEDDPICC long-cycle setup
+
+How to set up qualification in HubSpot for **long-cycle, multi-stakeholder** deals (e.g. aerospace, defense, anything with a security review).
+
+Assumes hybrid PLG + SLG. Keep the PLG pipeline light. Apply this build to the **sales-assist / enterprise** pipeline (or a dedicated long-cycle pipeline).
+
+---
+
+## The problem this solves
+
+Most GitHub / open-source “qualification” tools in GTM lists are strong at:
+
+- firmographic ICP fit
+- inbound triage
+- enrichment and CRM hygiene
+
+They assume a **fast, self-serve buying motion**.
+
+They break when the deal has:
+
+- ~5 stakeholders
+- a ~6-month evaluation
+- legal, procurement, and InfoSec as real gates
+
+**Bottom line:** HubSpot (with a real MEDDPICC scorecard and stage gates) is the qualification engine. Other tools feed evidence and milestones into it. Do not ask a single inbound “fit verdict” to replace buying-committee and paper-process qualification.
+
+---
+
+## Architecture: four lanes (+ optional fifth)
+
+Treat these as **one deal process in HubSpot**, plus optional add-ons. You do not need to buy four products on day one.
+
+### 1. Deal scorecard (start here — pure HubSpot)
+
+This is the qualification engine. Everything else feeds it.
+
+#### Deal properties to create (MEDDPICC)
+
+| Property (suggested internal name) | Type (suggested) | Purpose |
+| --- | --- | --- |
+| `meddpicc_metrics` | Multi-line text | What success looks like for the buyer |
+| `meddpicc_economic_buyer` | Single-line text or association note | Budget owner; prefer also associating the Contact |
+| `meddpicc_decision_criteria` | Multi-line text | How they will choose |
+| `meddpicc_decision_process` | Multi-line text | Steps, approvers, sequence |
+| `meddpicc_paper_process` | Multi-line text | Legal, procurement, InfoSec — critical for A&D |
+| `meddpicc_identified_pain` | Multi-line text | Business pain tied to urgency |
+| `meddpicc_champion` | Single-line text | Named champion |
+| `meddpicc_champion_tested` | Dropdown: Unknown / Claimed / Tested | Influence actually verified |
+| `meddpicc_competition` | Multi-line text or checkbox | Alternatives including do-nothing |
+| `meddpicc_completeness_pct` | Number (manual or calculated if you have ops support) | Pipeline hygiene signal |
+
+Also associate **Champion** and **Economic Buyer** as deal contacts with roles where your HubSpot plan supports contact roles on deals.
+
+#### Wire into the pipeline
+
+1. Put the MEDDPICC fields on the deal record layout (deal card / sidebar / focused view so AEs see them without hunting).
+2. Build a **pipeline view** (or board columns) that surfaces incompleteness: Champion tested, EB named, Paper process started, Completeness %.
+3. Add **stage entry requirements** (examples — adjust names to the client’s stages):
+
+| Moving into / past | Minimum required |
+| --- | --- |
+| Out of Discovery / Qualify | Champion named + Identified pain |
+| Into Proposal / Commercial | Economic Buyer + Decision process |
+| Into Negotiation / Late stage | Paper process started (not blank) |
+| Into Closed Won (optional hard gate) | Security status Cleared *or* explicit waiver property |
+
+4. Tie **forecast category** or manager review to completeness (even a simple “red if completeness under X% in late stage” view is enough).
+
+This lane is HubSpot-native. No Gong or Accord required to start.
+
+---
+
+### 2. Evidence (keep the scorecard honest)
+
+Empty MEDDPICC fields filled with optimism are worse than blanks.
+
+#### Light version (HubSpot only)
+
+- Require a logged call or note before `meddpicc_champion_tested` = Tested (process rule + training; enforce with workflow tasks if helpful).
+- Property: `last_qualification_evidence_date` (date) — updated when AE logs evidence.
+- Deal view filter: late-stage deals with stale evidence date.
+
+#### Full version
+
+- Connect Gong (or Chorus / ZoomInfo CI) to HubSpot.
+- Map deal-board / MEDDICC playbook suggestions into the **same** MEDDPICC properties where possible.
+- Rule: AE owns the field. Conversation intel suggests. Do not silently overwrite without a defined process.
+
+Add this when deals are long and teams inflate “we have a champion.”
+
+---
+
+### 3. Shared timeline (buyer calendar, not just yours)
+
+Multi-stakeholder + six months means someone owns the **buyer’s** milestones.
+
+#### Light version (HubSpot)
+
+Deal-associated tasks or a checklist object (custom object if you use one; otherwise tasks + deal properties):
+
+Examples:
+
+- Security packet sent
+- Security / InfoSec call booked
+- Legal redlines started
+- Procurement intro
+- Exec sponsor meeting
+
+Each item: owner + due date. Pipeline view or report on **overdue** items for open late-stage deals.
+
+#### Full version
+
+- Accord or Dock as the mutual action plan the buyer sees.
+- Sync key milestones back to HubSpot deal properties or tasks so RevOps keeps one scoreboard.
+
+**Rule:** Do not buy a MAP tool to paper over empty CRM fields. Get MEDDPICC adoption first.
+
+---
+
+### 4. Security gate (InfoSec is qualification)
+
+For aerospace / defense / security-review deals, InfoSec is not a checkbox at the end. It is a gate.
+
+#### HubSpot properties
+
+| Property | Type | Values (example) |
+| --- | --- | --- |
+| `security_questionnaire_status` | Dropdown | Not started / In progress / Submitted / Cleared / Waived |
+| `trust_center_shared` | Checkbox or Yes/No | Packet / trust center shared with buyer |
+| `security_blocker_notes` | Multi-line text | What’s stuck |
+
+#### Stage gate
+
+- Cannot move past a defined stage until status ≠ Not started (early enforcement), **or**
+- Cannot enter late stage / Closed Won until Cleared or Waived (hard enforcement).
+
+Pick enforcement strength with sales + InfoSec. Document the waiver path so deals do not get stuck forever without an owner.
+
+#### Automation (sketch)
+
+- When Paper process mentions security / when stage hits X: create task for SE/CS (or security owner) to send packet or open questionnaire workspace.
+- When status → Cleared: optional Slack/internal notification (draft only until approved).
+
+#### Outside HubSpot
+
+HyperComply, Conveyor, Whistic (or similar) do the questionnaire grind. HubSpot tracks whether the gate is open or blocked. Seller-side GRC (Vanta, Drata, Comp AI compliance, Hyperproof, etc.) is separate from CRM qualification but often pairs with the trust packet.
+
+---
+
+### 5. Optional fifth: account prioritization
+
+**6sense / Demandbase (or similar)** answer: which accounts to chase.
+
+They do **not** answer: is this opportunity qualified.
+
+- Feed target accounts / intent into company score or list membership in HubSpot.
+- SDR/AE uses it for coverage.
+- MEDDPICC on the deal still decides if the opportunity is real.
+
+Do not mix “account is in-market” with “we have an Economic Buyer.”
+
+---
+
+## What not to force from self-serve / GitHub GTM tools
+
+| Useful for | Not a substitute for |
+| --- | --- |
+| ICP / firmographic fit | Champion testing |
+| Enrichment waterfalls | Economic Buyer access |
+| Inbound “verdict” / lead score | Paper process / InfoSec |
+| MCP CRM research agents | Multi-threaded coverage over months |
+| PQL / product-usage scoring | Decision process and timeline ownership |
+
+Use HubSpot MCP, Twenty, Comp AI CRM, n8n, OpenOutreach-style kits as **assistive layers** (research, CRM updates, briefs). Do not treat them as the source of truth for deal qualification.
+
+---
+
+## Rollout order
+
+1. **Align** on the MEDDPICC field set + stage gates with sales leadership (and InfoSec for security status rules). One session. Get written agreement on stage names and required fields.
+2. **Sandbox build:** properties, deal views, stage requirements. Pilot on **one** pipeline (long-cycle only).
+3. **Enable AEs:** empty field means “we don’t know,” not “N/A.” Managers review completeness in pipeline meetings.
+4. **Security lane:** add status properties + gates for the long-cycle segment only. Leave PLG / SMB pipeline lighter.
+5. **Only then:** Gong field mapping and/or MAP tool if the process is sticking.
+6. **Last:** ABM intent platforms if TAM is large enough to need account prioritization at scale.
+
+
+---
+
+## Workflows & views (optional)
+
+**Not required for v1.** Properties + deal views + stage entry requirements do most of the work. Add workflows (and a few saved views) only where people skip the process without a nudge.
+
+### Principle
+
+Automate **reminders and gates**, not **judgment**.
+
+Do **not** build workflows that auto-fill MEDDPICC from forms, enrichment, or AI. That recreates the PLG “fake qualified” problem.
+
+### Phase 1 (no workflows)
+
+- MEDDPICC + security deal properties
+- Deal record layout + pipeline views
+- Stage entry requirements (this is the main enforcement)
+- Manager ritual: weekly pipeline review on incompleteness
+
+### Phase 2 workflows (add when pain shows up)
+
+#### 1. Late-stage incomplete MEDDPICC
+
+- **Trigger:** deal enters Proposal / Negotiation (use your stage names) AND any of: Champion tested ≠ Tested, Economic Buyer empty, Paper process empty
+- **Action:** create task for AE (optional: notify manager). Do not write the qualification fields automatically.
+
+#### 2. Security gate kickoff
+
+- **Trigger:** Paper process populated, OR deal hits a defined stage, OR deal type / pipeline = long-cycle
+- **Action:** if `security_questionnaire_status` is blank, set to Not started; create task for security / SE owner (“send packet / open questionnaire workspace”)
+
+#### 3. Stale evidence
+
+- **Trigger:** late-stage deal AND `last_qualification_evidence_date` older than N days (e.g. 14)
+- **Action:** task to AE: “log call evidence or update Champion / EB”
+
+#### 4. Security cleared → unblock
+
+- **Trigger:** `security_questionnaire_status` → Cleared
+- **Action:** complete related blocker task; optional internal note or Slack draft (send only with approval)
+
+### Saved views (prefer over contact lists)
+
+The unit of work is the **deal**. Use saved pipeline / deal views. Classic contact active lists are secondary.
+
+| View / filter | Purpose |
+| --- | --- |
+| Open long-cycle deals, completeness under threshold | Pipeline hygiene |
+| Late-stage + security Not started or In progress | InfoSec bottleneck queue |
+| Champion tested = Claimed (not Tested) | Manager coaching |
+| Overdue deal tasks (security, legal, procurement) | Timeline slippage |
+| Closed-lost with Paper process blank | Post-mortem pattern |
+
+### What to skip
+
+- Contact lifecycle workflows as a substitute for deal MEDDPICC
+- Mass sequence enrollment based on “qualified”
+- Scoring workflows that collapse ICP fit + MEDDPICC into one number
+- Anything that marks a deal qualified without a human updating Champion / EB / Paper process
+
+---
+
+## Build checklist
+
+### Properties
+
+- [ ] MEDDPICC deal properties created (table above)
+- [ ] Champion tested dropdown
+- [ ] Completeness % (manual OK for v1)
+- [ ] Security questionnaire status + trust center + blocker notes
+- [ ] Optional: last qualification evidence date
+
+### Layout and views
+
+- [ ] Deal record shows MEDDPICC without scrolling forever
+- [ ] Pipeline view for long-cycle: Champion tested, EB, Paper process, Security status, Completeness
+- [ ] Overdue timeline / task view for late-stage deals
+
+### Process enforcement
+
+- [ ] Stage entry requirements documented and configured
+- [ ] Waiver path for security Cleared vs Waived
+- [ ] Forecast or manager ritual uses completeness (not vanity stage)
+
+### Segmenting motions
+
+- [ ] Long-cycle pipeline (or deal type) identified
+- [ ] PLG / self-serve pipeline explicitly **not** forced onto full MEDDPICC
+- [ ] Lists/reports labeled PLG vs SLG where both exist
+
+### Integrations (later)
+
+- [ ] Gong/Chorus mapped to same properties (optional)
+- [ ] Accord/Dock sync plan (optional)
+- [ ] Questionnaire tool chosen; HubSpot only tracks gate status
+- [ ] ABM intent → company lists (optional)
+
+
+### Workflows & views (optional / phase 2)
+
+- [ ] Late-stage incomplete MEDDPICC → AE task (no auto-fill)
+- [ ] Security gate kickoff → status + owner task
+- [ ] Stale evidence reminder (if evidence date property exists)
+- [ ] Security Cleared → clear blocker / notify
+- [ ] Saved deal views: low completeness, security bottleneck, Champion claimed-only
+- [ ] Confirmed: no workflow auto-writes MEDDPICC judgment fields
+
+### Enablement
+
+- [ ] One-pager for AEs: what each field means + example good answers
+- [ ] Manager scorecard for weekly pipeline review
+- [ ] Sandbox → prod change log
+
+---
+
+## Minimal stack (opinionated)
+
+**Must have**
+
+- HubSpot deals + MEDDPICC properties + stage gates
+
+**Add when pain shows up**
+
+- Gong (evidence) and/or Accord/Dock (shared plan)
+- HyperComply / Conveyor / Whistic (security packet velocity)
+
+**Optional**
+
+- 6sense / Demandbase for account prioritization
+
+**Assistive only**
+
+- HubSpot MCP, enrichment, n8n, open-source ICP scorers
+
+---
+
+## One-line takeaway
+
+The open-source GTM “qualification” layer is mostly **PLG/ICP triage + CRM glue**. For long-cycle, security-gated, multi-stakeholder deals, the real engine is **MEDDPICC-in-HubSpot + evidence + shared milestones + security-questionnaire status** — with ABM intent as account prioritization, not deal health.
