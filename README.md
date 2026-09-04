@@ -51,6 +51,22 @@ This is the qualification engine. Everything else feeds it.
 
 Also associate **Champion** and **Economic Buyer** as deal contacts with roles where your HubSpot plan supports contact roles on deals.
 
+> **Plan note:** custom deal properties, stage entry requirements, and workflows require **Sales Hub Pro or Enterprise** (contact roles on deals need Sales Hub Enterprise). Confirm your tier before building this out — Starter won't support the gates below.
+
+#### Buying committee (multi-stakeholder tracking)
+
+Champion and Economic Buyer are not the whole committee. A 5-stakeholder, 6-month deal typically also has a technical evaluator, an InfoSec/security reviewer, procurement, legal, and an exec sponsor. Track them explicitly — don't let "we have a champion" stand in for "the room is covered."
+
+| Property (suggested internal name) | Type (suggested) | Purpose |
+| --- | --- | --- |
+| `meddpicc_stakeholder_map` | Multi-line text (or a custom object if you have the tier for it) | Name + role + engagement level for each known stakeholder |
+| `meddpicc_stakeholder_count` | Number | How many distinct stakeholders are identified and engaged |
+| `meddpicc_single_threaded` | Checkbox / Yes-No | Flag if the deal has only one real contact — the highest-risk state on a long-cycle deal |
+
+Associate each stakeholder as a deal contact with a role (Technical Evaluator, InfoSec Reviewer, Procurement, Legal, Exec Sponsor, etc.) where your plan supports contact roles. If it doesn't, log them in `meddpicc_stakeholder_map` as a running list.
+
+Add a saved view: **open long-cycle deals with fewer than 3 associated stakeholder roles** — this catches single-threaded deals before they stall in late stage, which is the #1 way long-cycle B2B deals silently die.
+
 #### Wire into the pipeline
 
 1. Put the MEDDPICC fields on the deal record layout (deal card / sidebar / focused view so AEs see them without hunting).
@@ -233,6 +249,7 @@ The unit of work is the **deal**. Use saved pipeline / deal views. Classic conta
 | View / filter | Purpose |
 | --- | --- |
 | Open long-cycle deals, completeness under threshold | Pipeline hygiene |
+| Open long-cycle deals with under 3 stakeholder roles | Single-threaded deal risk |
 | Late-stage + security Not started or In progress | InfoSec bottleneck queue |
 | Champion tested = Claimed (not Tested) | Manager coaching |
 | Overdue deal tasks (security, legal, procurement) | Timeline slippage |
@@ -254,6 +271,7 @@ The unit of work is the **deal**. Use saved pipeline / deal views. Classic conta
 - [ ] MEDDPICC deal properties created (table above)
 - [ ] Champion tested dropdown
 - [ ] Completeness % (manual OK for v1)
+- [ ] Stakeholder map + count + single-threaded flag (buying committee)
 - [ ] Security questionnaire status + trust center + blocker notes
 - [ ] Optional: last qualification evidence date
 
