@@ -6,13 +6,13 @@
 
 ---
 
-## 🧠 The pain point
+## The pain point
 
 Most GitHub and open-source "qualification" tools in GTM lists are strong at firmographic ICP fit, inbound triage and CRM hygiene. They assume a fast, self-serve buying motion, and they break when the deal has ~5 stakeholders, a ~6-month evaluation, and legal, procurement and InfoSec as real gates. My view: HubSpot, with a real MEDDPICC scorecard and stage gates, is the qualification engine, and other tools feed evidence and milestones into it.
 
 ---
 
-## ✨ What it gives you
+## What it gives you
 
 - **A MEDDPICC deal scorecard:** the deal properties to create, with suggested internal names, types and purpose
 - **Buying-committee tracking:** a stakeholder map, stakeholder count and a single-threaded flag, plus a view that catches single-threaded deals early
@@ -25,7 +25,7 @@ It assumes hybrid PLG + SLG: keep the PLG pipeline light and apply this to the s
 
 ---
 
-## 🗺 Where each step runs
+## Where each step runs
 
 1. **GitHub** is where you read the playbook. There's no code to install.
 2. **A meeting with sales leadership (and InfoSec)** is where you agree the MEDDPICC fields, stage names and gates.
@@ -37,7 +37,7 @@ It assumes hybrid PLG + SLG: keep the PLG pipeline light and apply this to the s
 
 ---
 
-## 🚀 Quick start
+## Quick start
 
 1. Check your tier: custom deal properties, stage entry requirements and workflows need **Sales Hub Pro or Enterprise** (contact roles on deals need Enterprise).
 2. Follow the [rollout order](SETUP.md#rollout-order) in SETUP.md.
@@ -46,7 +46,7 @@ It assumes hybrid PLG + SLG: keep the PLG pipeline light and apply this to the s
 
 ---
 
-## 📋 Example: stage entry requirements
+## Example: stage entry requirements
 
 Adjust the names to your own stages:
 
@@ -59,7 +59,7 @@ Adjust the names to your own stages:
 
 ---
 
-## 📚 More
+## More
 
 - [SETUP.md](SETUP.md): plan note, rollout order and the full build checklist
 - [docs/DETAILS.md](docs/DETAILS.md): the full playbook: the four lanes (scorecard, evidence, shared timeline, security gate) plus optional account prioritization, what not to force from self-serve GTM tools, workflows and saved views, the minimal stack, and the one-line takeaway
