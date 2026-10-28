@@ -64,3 +64,16 @@ How to roll this out and what to tick off as you build it. The full playbook (ev
 - [ ] One-pager for AEs: what each field means + example good answers
 - [ ] Manager scorecard for weekly pipeline review
 - [ ] Sandbox → prod change log
+
+
+## Deal export for the readiness agent
+
+After properties exist (or using the sample file), export open deals from the long-cycle pipeline with the MEDDPICC fields plus `pipeline`, `stage`, `amount`, `owner`, `number of associated contacts`, and security status.
+
+```bash
+python agent.py --input ~/Downloads/long_cycle_deals.csv --output out/pipeline-review
+```
+
+Outputs stay local: audit CSV, review queue, field-fill suggestions, readiness brief. Import suggestion values only after an AE or manager accepts them. The agent never writes to HubSpot.
+
+Optional Claude: copy `.env.example` to `.env`, set `ANTHROPIC_API_KEY`, re-run. Use `--no-llm` to force rules.

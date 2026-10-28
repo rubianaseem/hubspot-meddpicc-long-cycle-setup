@@ -268,3 +268,8 @@ The unit of work is the **deal**. Use saved pipeline / deal views. Classic conta
 ## One-line takeaway
 
 The open-source GTM “qualification” layer is mostly **PLG/ICP triage + CRM glue**. For long-cycle, security-gated, multi-stakeholder deals, the real engine is **MEDDPICC-in-HubSpot + evidence + shared milestones + security-questionnaire status** — with ABM intent as account prioritization, not deal health.
+
+
+## Readiness agent
+
+Pair this playbook with `agent.py`. It audits an export against the same MEDDPICC ideas (Champion, Economic Buyer, paper process, security gate, single-threading) and writes local review files. It does not replace stage entry requirements in HubSpot — it catches gaps before the meeting.
